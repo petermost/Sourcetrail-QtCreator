@@ -22,7 +22,7 @@ public:
     SourcetrailPlugin();
     ~SourcetrailPlugin();
 
-    bool initialize(const QStringList &arguments, QString *errorString) override;
+    void initialize() override;
     void extensionsInitialized() override;
     bool delayedInitialize() override;
     ShutdownFlag aboutToShutdown() override;
@@ -39,7 +39,7 @@ private:
     void startListening();
     void stopListening();
     void sendMessage(QString message);
-    void setCursor(QString file, int line, int column);
+    void setCursor(const Utils::FilePath &file, int line, int column);
 
     QTcpServer *m_server;
     SourcetrailPluginSettingsPage *m_page;

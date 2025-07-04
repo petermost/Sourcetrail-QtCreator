@@ -1,0 +1,7 @@
+# Automatically normalize line endings:
+* text=auto
+
+# Ensure correct line endings for scripts:
+*.sh text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf

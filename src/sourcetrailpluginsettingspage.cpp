@@ -7,18 +7,14 @@
 
 namespace Sourcetrail {
 
-SourcetrailPluginSettingsPage::SourcetrailPluginSettingsPage(QObject *parent) :
-    Core::IOptionsPage(parent),
-    m_page(0)
+SourcetrailPluginSettingsPage::SourcetrailPluginSettingsPage(QObject *parent)
+    : QObject(parent)
 {
     setId(Constants::CATEGORY_ID);
     setDisplayName(tr(Constants::CATEGORY));
+    setCategory(Utils::Id(Constants::CATEGORY_ID));
 
-    setCategory(Core::Id(Constants::CATEGORY_ID));
-    setDisplayCategory(QLatin1String(Constants::CATEGORY));
-    setCategoryIcon(Utils::Icon(Constants::CATEGORY_ICON));
-
-    QSettings *s = Core::ICore::settings();
+    Utils::QtcSettings *s = Core::ICore::settings();
     m_settings.fromSettings(s);
 }
 
@@ -52,7 +48,7 @@ void SourcetrailPluginSettingsPage::apply()
     if (m_settings != setting)
     {
         m_settings = setting;
-        QSettings *s = Core::ICore::settings();
+        Utils::QtcSettings *s = Core::ICore::settings();
         m_settings.toSettings(s);
         emit SourcetrailPluginSettingsChanged(setting);
     }

@@ -1,15 +1,14 @@
+# CMake
+CMakeUserPresets.json
 
-*.pro.user
-*.pro.user.*
+# Vcpkg:
+vcpkg_installed/
 
-.moc
-.obj
-.rcc
-.uic
-Makefile
-output
-qt-src
-qt-bin
+# IntelliJ, Eclipse, Qt Creator:
+.vs
+.vscode
+CMakeLists.txt.user
 
-.qmake.stash
-Sourcetrail.json
+# Sourcetrail databases, bookmarks
+*.srctrlbm
+*.srctrldb

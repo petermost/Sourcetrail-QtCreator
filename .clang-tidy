@@ -1,0 +1,90 @@
+# Note: tabs are not allowed!
+
+---
+Checks: >
+    -*,
+    #
+    # Enabled only for IDEs:
+    #
+    llvm-include-order,
+    readability-implicit-bool-conversion,
+    readability-make-member-function-const,
+
+    #
+    # Emits only warnings (no fixes):
+    #
+    bugprone-unused-local-non-trivial-variable,
+
+    #
+    # Always enabled:
+    #
+    bugprone-copy-constructor-init,
+    bugprone-shared-ptr-array-mismatch,
+    bugprone-standalone-empty,
+    bugprone-string-constructor,
+    bugprone-unique-ptr-array-mismatch,
+    misc-unused-parameters,
+    modernize-use-bool-literals,
+    modernize-use-nullptr,
+    modernize-use-override,
+    readability-convert-member-functions-to-static,
+    readability-qualified-auto,
+    readability-redundant-string-cstr,
+    readability-redundant-string-init,
+    readability-simplify-boolean-expr,
+
+    #
+    # Check usefullness:
+    #
+    # cppcoreguidelines-pro-type-member-init,
+    # modernize-use-default-member-init,
+    # readability-redundant-member-init,
+    # readability-static-accessed-through-instance
+
+    #
+    # Problematic switches:
+    #
+    # bugprone-parent-virtual-call, # It is not clear whether the detected cases are intentional,
+    # misc-include-cleaner, # Breaks to many files and replaces the Qt header with lower level ones,
+
+WarningsAsErrors:  ''
+HeaderFilterRegex: '.*'
+FormatStyle:       'file'
+CheckOptions:
+    - key: bugprone-string-constructor.StringNames
+      value: '::std::basic_string;::std::basic_string_view;QString'
+
+    - key: bugprone-unused-local-non-trivial-variable.IncludeTypes
+      value: '.*'
+    - key: bugprone-unused-local-non-trivial-variable.ExcludeTypes
+      value: '::std::lock_guard'
+
+    - key: cppcoreguidelines-pro-type-member-init.UseAssignment
+      value: '1'
+
+    - key: misc-unused-parameters.StrictMode
+      value: '1'
+
+    - key: modernize-use-bool-literals.IgnoreMacros
+      value: '0'
+
+    - key: modernize-use-equals-default.IgnoreMacros
+      value: '0'
+      
+    - key: modernize-use-override.IgnoreDestructors
+      value: '0'
+
+    - key: modernize-use-default-member-init.UseAssignment
+      value: '1'
+
+    - key: modernize-use-default-member-init.IgnoreMacros
+      value: '0'
+
+    - key: readability-redundant-member-init.IgnoreBaseInCopyConstructors
+      value: '1'
+
+    - key: readability-redundant-string-init.StringNames
+      value: '::std::basic_string;::std::basic_string_view;QString'
+
+    - key: readability-simplify-boolean-expr.SimplifyDeMorgan
+      value: '0'

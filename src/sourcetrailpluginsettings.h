@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utils/qtcsettings.h>
+
 #include <QObject>
 #include <QString>
 
@@ -10,8 +12,8 @@ namespace Sourcetrail {
 class SourcetrailPluginSettings
 {
 public:
-    void toSettings(QSettings *s) const;
-    void fromSettings(QSettings *s);
+    void toSettings(Utils::QtcSettings *s) const;
+    void fromSettings(Utils::QtcSettings *s);
 
     bool equals(const SourcetrailPluginSettings &bs) const;
 

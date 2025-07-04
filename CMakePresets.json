@@ -1,0 +1,90 @@
+{
+	"version": 4,
+	"configurePresets": [
+		{
+			"hidden": true,
+			"name": "default-presets",
+			"generator": "Ninja",
+			"warnings": {
+				"dev": false,
+				"uninitialized": false
+			},
+			"binaryDir": "${sourceParentDir}/build/${presetName}"
+		},
+		{
+			"hidden": true,
+			"name": "system-default-presets",
+			"inherits": [
+				"default-presets"
+			],
+			"condition": {
+				"type": "equals",
+				"lhs": "${hostSystemName}",
+				"rhs": "Linux"
+			}
+		},
+		{
+			"hidden": true,
+			"name": "debug-presets",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug",
+				"CMAKE_VERBOSE_MAKEFILE": "TRUE",
+				"CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE"
+			}
+		},
+		{
+			"hidden": true,
+			"name": "release-presets",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release",
+				"CMAKE_VERBOSE_MAKEFILE": "FALSE",
+				"CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE"
+			}
+		},
+		{
+			"hidden": true,
+			"name": "vcpkg-default-presets",
+			"inherits": [
+				"default-presets"
+			],
+			"cacheVariables": {
+				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
+				"VCPKG_TARGET_TRIPLET": "x64-arm64-linux-windows-osx-static-md"
+			}
+		},
+
+
+
+		{
+			"name": "system-ninja-debug",
+			"inherits": [
+				"debug-presets",
+				"system-default-presets"
+			]
+		},
+		{
+			"name": "system-ninja-release",
+			"inherits": [
+				"release-presets",
+				"system-default-presets"
+			]
+		},
+
+
+
+		{
+			"name": "vcpkg-ninja-debug",
+			"inherits": [
+				"debug-presets",
+				"vcpkg-default-presets"
+			]
+		},
+		{
+			"name": "vcpkg-ninja-release",
+			"inherits": [
+				"release-presets",
+				"vcpkg-default-presets"
+			]
+		}
+	]
+}

@@ -1,11 +1,16 @@
 {
-    \"Name\" : \"Sourcetrail\",
-        \"Version\" : \"0.8.3\",
-	\"CompatVersion\" : \"$$QTCREATOR_COMPAT_VERSION\",
-        \"Vendor\" : \"Coati Software KG\",
-    \"Copyright\" : \"Coati Software KG\",
-	\"License\" : \"The MIT License (MIT)\",
-    \"Description\" : \"Synchronize QtCreator with Sourcetrail\",
-    \"Url\" : \"https://sourcetrail.com\",
-    $$dependencyList
+    "Id" : "sourcetrail",
+    "DisplayName": "Sourcetrail",
+    "Name" : "Sourcetrail",
+    "Version" : "17.0.0",
+	"VendorId" : "perasoftwaresolutions",
+    "Vendor" : "PERA Software Solutions GmbH",
+	"License" : "The MIT License (MIT)",
+    "Description" : "Synchronize Qt Creator with Sourcetrail",
+    "Url" : "http://sourcetrail.de",
+    "DocumentationUrl": "https://github.com/petermost/Sourcetrail-QtCreator",
+    "Dependencies" : [
+		{ "Id": "Core", "Version": "17.0.0" },
+		{ "Id": "CppEditor", "Version": "17.0.0" }
+	]
 }

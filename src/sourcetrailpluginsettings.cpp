@@ -9,7 +9,7 @@ static const char sourcetrailPortKey[] = "SourcetrailPort";
 
 namespace Sourcetrail {
 
-void SourcetrailPluginSettings::fromSettings(QSettings *s)
+void SourcetrailPluginSettings::fromSettings(Utils::QtcSettings *s)
 {
     // assign defaults
     *this = SourcetrailPluginSettings();
@@ -21,12 +21,12 @@ void SourcetrailPluginSettings::fromSettings(QSettings *s)
     s->endGroup();
 }
 
-void SourcetrailPluginSettings::toSettings(QSettings *s) const
+void SourcetrailPluginSettings::toSettings(Utils::QtcSettings *s) const
 {
-    s->beginGroup(QLatin1String(settingsGroup));
-    s->setValue(QLatin1String(addressKey), m_hostAddress);
-    s->setValue(QLatin1String(pluginPortKey), m_pluginPort);
-    s->setValue(QLatin1String(sourcetrailPortKey), m_sourcetrailPort);
+    s->beginGroup(settingsGroup);
+    s->setValue(addressKey, m_hostAddress);
+    s->setValue(pluginPortKey, m_pluginPort);
+    s->setValue(sourcetrailPortKey, m_sourcetrailPort);
     s->endGroup();
 }
 

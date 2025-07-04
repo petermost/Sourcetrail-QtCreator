@@ -45,7 +45,7 @@ void SourcetrailPlugin::handleMessage(QString message)
     }
     if (list[0] == "moveCursor")
     {
-        setCursor(list[1], list[2].toInt(), list[3].toInt());
+        setCursor(Utils::FilePath::fromString(list[1]), list[2].toInt(), list[3].toInt());
     }
 }
 
@@ -60,13 +60,13 @@ SourcetrailPlugin::~SourcetrailPlugin()
 
 void SourcetrailPlugin::restartServer()
 {
-    QSettings *s = Core::ICore::settings();
+    Utils::QtcSettings *s = Core::ICore::settings();
     m_settings.fromSettings(s);
     stopListening();
     startListening();
 }
 
-bool SourcetrailPlugin::initialize(const QStringList &arguments, QString *errorString)
+void SourcetrailPlugin::initialize()
 {
     // Register objects in the plugin manager's object pool
     // Load settings
@@ -75,8 +75,7 @@ bool SourcetrailPlugin::initialize(const QStringList &arguments, QString *errorS
     // In the initialize function, a plugin can be sure that the plugins it
     // depends on have initialized their members.
 
-    Q_UNUSED(arguments)
-    Q_UNUSED(errorString)
+    IOptionsPage::registerCategory(Utils::Id(Constants::CATEGORY_ID), Constants::CATEGORY, Utils::FilePath(Constants::CATEGORY_ICON));
 
     m_page = new SourcetrailPluginSettingsPage(this);
     connect(m_page, &SourcetrailPluginSettingsPage::SourcetrailPluginSettingsChanged,
@@ -130,8 +129,6 @@ bool SourcetrailPlugin::initialize(const QStringList &arguments, QString *errorS
     {
         editorContextMenu->addAction(cmd);
     }
-
-    return true;
 }
 
 
@@ -158,7 +155,7 @@ void SourcetrailPlugin::startListening()
 {
     if (!m_server->listen(QHostAddress::LocalHost, m_settings.m_sourcetrailPort))
     {
-        MessageManager::write(QString{"Sourcetrail Plugin TCP Server - Could not listen to port %1"}.arg(m_settings.m_sourcetrailPort));
+        MessageManager::writeSilently(QString{"Sourcetrail Plugin TCP Server - Could not listen to port %1"}.arg(m_settings.m_sourcetrailPort));
     }
     else
     {
@@ -202,9 +199,9 @@ void SourcetrailPlugin::sendPing()
     sendMessage("ping>>Qt Creator<EOM>");
 }
 
-void SourcetrailPlugin::setCursor(QString file, int line, int column)
+void SourcetrailPlugin::setCursor(const Utils::FilePath &file, int line, int column)
 {
-    Core::EditorManager::openEditorAt(file, line, column);
+    Core::EditorManager::openEditorAt(Utils::Link(file, line, column));
 }
 
 void SourcetrailPlugin::sendLocation()
@@ -214,7 +211,7 @@ void SourcetrailPlugin::sendLocation()
     {
         int line = Core::EditorManager::currentEditor()->currentLine();
         int column = Core::EditorManager::currentEditor()->currentColumn();
-        QString file = Core::EditorManager::currentDocument()->filePath().toString();
+        QString file = Core::EditorManager::currentDocument()->filePath().toUserOutput();
 
         QString message = "setActiveToken>>" + file + ">>" + QString::number(line) +
                           ">>" + QString::number(column) + "<EOM>";
@@ -223,7 +220,7 @@ void SourcetrailPlugin::sendLocation()
     }
     else
     {
-        MessageManager::write(QString{"Sourcetrail Plugin TCP Server - Action Triggered but no editor"});
+        MessageManager::writeSilently(QString{"Sourcetrail Plugin TCP Server - Action Triggered but no editor"});
     }
 }
 
@@ -232,7 +229,7 @@ void SourcetrailPlugin::triggerAction()
     sendPing();
     sendLocation();
 
-    QStringList list;
+    Utils::FilePaths list;
     Core::ICore::openFiles(list);
 }
 

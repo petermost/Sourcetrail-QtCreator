@@ -1,0 +1,88 @@
+---
+Language: Cpp
+Standard: Latest
+ColumnLimit: 150
+AccessModifierOffset: -4
+
+AlignAfterOpenBracket: DontAlign
+
+TabWidth: 4
+IndentWidth: 4
+UseTab: Always
+# UseTab: AlignWithSpaces
+# AlignConsecutiveAssignments: Consecutive
+
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: None
+AllowShortLoopsOnASingleLine: false
+
+BreakTemplateDeclarations: Yes
+BreakBeforeBinaryOperators: None
+
+FixNamespaceComments: true
+
+# Basically the 'Allman' style, but necessary for 'BeforeLambdaBody'
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: true
+  BeforeElse: true
+  BeforeLambdaBody: true
+  BeforeWhile: true
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+
+# K&R style:
+# BreakBeforeBraces: Custom
+# BraceWrapping:
+#   AfterCaseLabel: false
+#   AfterClass: true
+#   AfterControlStatement: Never
+#   AfterEnum: true
+#   AfterFunction: true
+#   AfterNamespace: true
+#   AfterStruct: true
+#   AfterUnion: true
+#   AfterExternBlock: true
+#   BeforeCatch: false
+#   BeforeElse: false
+#   BeforeLambdaBody: true
+#   BeforeWhile: false
+#   SplitEmptyFunction: true
+#   SplitEmptyRecord: true
+#   SplitEmptyNamespace: true
+
+# Warning
+# This option will be renamed and expanded to support other styles.
+#
+# Warning
+# Setting this option to true could lead to incorrect code formatting due to clang-format’s lack of complete semantic
+# information. As such, extra care should be taken to review code changes made by this option.
+#RemoveBracesLLVM: true
+
+# Warning
+# Setting this option to any value other than Leave could lead to incorrect code formatting due to clang-format’s lack of
+# complete semantic information. As such, extra care should be taken to review code changes made by this option.
+#RemoveParentheses: MultipleParentheses
+
+LambdaBodyIndentation: OuterScope
+
+# Constructor settings:
+PackConstructorInitializers: Never
+BreakConstructorInitializers: BeforeComma
+
+PenaltyBreakOpenParenthesis: 1
+
+# BinPackArguments: false (Breaks connect calls!)

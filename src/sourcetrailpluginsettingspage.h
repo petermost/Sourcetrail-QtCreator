@@ -11,7 +11,7 @@ namespace Sourcetrail {
 
 namespace Ui { class SourcetrailPluginSettingsPage; }
 
-class SourcetrailPluginSettingsPage : public Core::IOptionsPage
+class SourcetrailPluginSettingsPage : public QObject, public Core::IOptionsPage
 {
     Q_OBJECT
 
@@ -20,17 +20,17 @@ public:
     ~SourcetrailPluginSettingsPage();
 
     // IOptionsPage
-    QWidget *widget();
-    void apply();
-    void finish();
+    QWidget *widget() override;
+    void apply() override;
+    void finish() override;
 
 signals:
-    void SourcetrailPluginSettingsChanged(const SourcetrailPluginSettings &);
+    void SourcetrailPluginSettingsChanged(const Sourcetrail::SourcetrailPluginSettings &);
 
 private:
     void settingsFromUi(SourcetrailPluginSettings &sourcetrail) const;
 
-    Ui::SourcetrailPluginSettingsPage *m_page;
+    Ui::SourcetrailPluginSettingsPage *m_page = nullptr;
     QPointer<QWidget> m_widget;
     SourcetrailPluginSettings m_settings;
 };

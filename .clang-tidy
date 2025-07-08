@@ -3,12 +3,6 @@
 ---
 Checks: >
     -*,
-    #
-    # Enabled only for IDEs:
-    #
-    llvm-include-order,
-    readability-implicit-bool-conversion,
-    readability-make-member-function-const,
 
     #
     # Emits only warnings (no fixes):
@@ -23,15 +17,20 @@ Checks: >
     bugprone-standalone-empty,
     bugprone-string-constructor,
     bugprone-unique-ptr-array-mismatch,
+    llvm-include-order,
     misc-unused-parameters,
+    modernize-concat-nested-namespaces,
     modernize-use-bool-literals,
     modernize-use-nullptr,
     modernize-use-override,
     readability-convert-member-functions-to-static,
+    readability-delete-null-pointer,
+    readability-implicit-bool-conversion,
+    readability-make-member-function-const,
     readability-qualified-auto,
     readability-redundant-string-cstr,
     readability-redundant-string-init,
-    readability-simplify-boolean-expr,
+    readability-simplify-boolean-expr
 
     #
     # Check usefullness:

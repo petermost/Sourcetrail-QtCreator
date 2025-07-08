@@ -1,33 +1,35 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.25)
+
+set(CREATOR_VERSION "17.0.0")
+set(CREATOR_URL "https://download.qt.io/official_releases/qtcreator/17.0/${CREATOR_VERSION}/installer_source")
+
+if (LINUX)
+	set(CREATOR_URL "${CREATOR_URL}/linux_x64")
+elseif(WINDOWS)
+	set(CREATOR_URL "${CREATOR_URL}/windows_x64")
+endif()
+
+project(QtCreatorSourcetrailPlugin VERSION ${CREATOR_VERSION} LANGUAGES CXX)
 
 function(downloadAndExtract targetDir url archiveName)
     if(NOT EXISTS "${CMAKE_BINARY_DIR}/${targetDir}")
-        message(STATUS "Downloading ${url} for ${targetDir} ...")
+        message(STATUS "Downloading ${url} ...")
         file(DOWNLOAD "${url}" "${CMAKE_BINARY_DIR}/${archiveName}" SHOW_PROGRESS)
         execute_process(COMMAND 7z x -y "${CMAKE_BINARY_DIR}/${archiveName}" -o${CMAKE_BINARY_DIR}/${targetDir})
     endif()
 endfunction()
 
-set(QT_CREATOR_URL "https://download.qt.io/official_releases/qtcreator/17.0/17.0.0/installer_source/linux_x64/")
-
-downloadAndExtract("qt-src" "${QT_CREATOR_URL}/qtcreator_dev.7z" "qt-dev.7z")
-downloadAndExtract("qt-bin" "${QT_CREATOR_URL}/qtcreator.7z" "qt-bin.7z")
-
-# Detect vcpkg build scenario here, so we don't depend on CMakePresets settings:
-if (CMAKE_TOOLCHAIN_FILE MATCHES "vcpkg.cmake$")
-	message(STATUS "Vcpkg Build")
-	set(isVcpkgBuild TRUE)
-else()
-	message(STATUS "System Build")
-	set(isVcpkgBuild FALSE)
-endif()
+downloadAndExtract("qt-src" "${CREATOR_URL}/qtcreator_dev.7z" "qt-dev.7z")
+downloadAndExtract("qt-bin" "${CREATOR_URL}/qtcreator.7z" "qt-bin.7z")
 
 # Make Ninja build verbose as well (https://github.com/ninja-build/ninja/issues/900):
 if (CMAKE_VERBOSE_MAKEFILE)
 	set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL "Verbose Makefile" FORCE)
 endif()
 
-project(QtCreatorSourcetrailPlugin VERSION 17.0.0 LANGUAGES CXX)
+# Hide things by default
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 
 # Enable automatic handling of Qt meta-features
 set(CMAKE_AUTOMOC ON)
@@ -52,18 +54,15 @@ add_library(Sourcetrail SHARED
 	
 	src/sourcetrailconstants.h
 	src/sourcetrail_global.h
+	
 	src/sourcetrailpluginsettingspage.h
     src/sourcetrailpluginsettingspage.cpp
+    
 	src/sourcetrailpluginsettings.h
     src/sourcetrailpluginsettings.cpp
+    
 	src/sourcetrailplugin.h
     src/sourcetrailplugin.cpp
-)
-
-# Definitions
-target_compile_definitions(Sourcetrail 
-    PRIVATE 
-        SOURCETRAIL_LIBRARY
 )
 
 # Include directories

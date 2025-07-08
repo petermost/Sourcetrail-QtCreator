@@ -1,7 +1,8 @@
 #pragma once
 
-namespace Sourcetrail {
-namespace Constants {
+
+namespace Sourcetrail::Constants
+{
 
 const char CATEGORY_ID[] = "Z.Sourcetrail";
 const char CATEGORY[] = "Sourcetrail";
@@ -16,5 +17,5 @@ const char STATUS_ACTION_ID[] = "QtCreatorSourcetrail.StatusAction";
 const char SERVER_RUNNING[] = "Server Status: Running";
 const char SERVER_STOPPED[] = "Server Status: Stopped";
 
-} // namespace Constants
-} // namespace Sourcetrail
+} // namespace Sourcetrail::Constants
+

@@ -41,17 +41,6 @@
 				"CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE"
 			}
 		},
-		{
-			"hidden": true,
-			"name": "vcpkg-default-presets",
-			"inherits": [
-				"default-presets"
-			],
-			"cacheVariables": {
-				"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
-				"VCPKG_TARGET_TRIPLET": "x64-arm64-linux-windows-osx-static-md"
-			}
-		},
 
 
 
@@ -67,23 +56,6 @@
 			"inherits": [
 				"release-presets",
 				"system-default-presets"
-			]
-		},
-
-
-
-		{
-			"name": "vcpkg-ninja-debug",
-			"inherits": [
-				"debug-presets",
-				"vcpkg-default-presets"
-			]
-		},
-		{
-			"name": "vcpkg-ninja-release",
-			"inherits": [
-				"release-presets",
-				"vcpkg-default-presets"
 			]
 		}
 	]

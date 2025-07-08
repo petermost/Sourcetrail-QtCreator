@@ -24,45 +24,45 @@ BreakBeforeBinaryOperators: None
 
 FixNamespaceComments: true
 
-# Basically the 'Allman' style, but necessary for 'BeforeLambdaBody'
 BreakBeforeBraces: Custom
-BraceWrapping:
-  AfterCaseLabel: true
-  AfterClass: true
-  AfterControlStatement: Always
-  AfterEnum: true
-  AfterFunction: true
-  AfterNamespace: true
-  AfterStruct: true
-  AfterUnion: true
-  AfterExternBlock: true
-  BeforeCatch: true
-  BeforeElse: true
-  BeforeLambdaBody: true
-  BeforeWhile: true
-  SplitEmptyFunction: true
-  SplitEmptyRecord: true
-  SplitEmptyNamespace: true
 
-# K&R style:
-# BreakBeforeBraces: Custom
+# Basically the 'Allman' style, but necessary for 'BeforeLambdaBody'
 # BraceWrapping:
-#   AfterCaseLabel: false
+#   AfterCaseLabel: true
 #   AfterClass: true
-#   AfterControlStatement: Never
+#   AfterControlStatement: Always
 #   AfterEnum: true
 #   AfterFunction: true
 #   AfterNamespace: true
 #   AfterStruct: true
 #   AfterUnion: true
 #   AfterExternBlock: true
-#   BeforeCatch: false
-#   BeforeElse: false
+#   BeforeCatch: true
+#   BeforeElse: true
 #   BeforeLambdaBody: true
-#   BeforeWhile: false
+#   BeforeWhile: true
 #   SplitEmptyFunction: true
 #   SplitEmptyRecord: true
 #   SplitEmptyNamespace: true
+
+# K&R style:
+BraceWrapping:
+  AfterCaseLabel: false
+  AfterClass: true
+  AfterControlStatement: Never
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  AfterExternBlock: true
+  BeforeCatch: false
+  BeforeElse: false
+  BeforeLambdaBody: true
+  BeforeWhile: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
 
 # Warning
 # This option will be renamed and expanded to support other styles.

@@ -2,7 +2,7 @@
     "Id" : "sourcetrail",
     "DisplayName": "Sourcetrail",
     "Name" : "Sourcetrail",
-    "Version" : "17.0.0",
+    "Version" : "@CREATOR_VERSION@",
 	"VendorId" : "perasoftwaresolutions",
     "Vendor" : "PERA Software Solutions GmbH",
 	"License" : "The MIT License (MIT)",
@@ -10,7 +10,7 @@
     "Url" : "http://sourcetrail.de",
     "DocumentationUrl": "https://github.com/petermost/Sourcetrail-QtCreator",
     "Dependencies" : [
-		{ "Id": "Core", "Version": "17.0.0" },
-		{ "Id": "CppEditor", "Version": "17.0.0" }
+		{ "Id": "Core", "Version": "@CREATOR_VERSION@" },
+		{ "Id": "CppEditor", "Version": "@CREATOR_VERSION@" }
 	]
 }

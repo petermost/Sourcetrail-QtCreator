@@ -18,23 +18,18 @@ SourcetrailPluginSettingsPage::SourcetrailPluginSettingsPage(QObject *parent)
 	m_settings.fromSettings(s);
 }
 
-SourcetrailPluginSettingsPage::~SourcetrailPluginSettingsPage()
-{
-	delete m_page;
-}
-
 QWidget *SourcetrailPluginSettingsPage::widget()
 {
 	if (m_widget == nullptr) {
-		m_widget = new QWidget;
-		m_page = new Ui::SourcetrailPluginSettingsPage;
-		m_page->setupUi(m_widget);
+		m_widget = std::make_unique<QWidget>();
+		m_page = std::make_unique<Ui::SourcetrailPluginSettingsPage>();
+		m_page->setupUi(m_widget.get());
 
 		m_page->hostaddress->setText(m_settings.m_hostAddress);
 		m_page->pluginport->setText(QString::number(m_settings.m_pluginPort));
 		m_page->sourcetrailport->setText(QString::number(m_settings.m_sourcetrailPort));
 	}
-	return m_widget;
+	return m_widget.get();
 }
 
 void SourcetrailPluginSettingsPage::apply()
@@ -55,8 +50,8 @@ void SourcetrailPluginSettingsPage::apply()
 
 void SourcetrailPluginSettingsPage::finish()
 {
-	delete m_widget;
-	delete m_page;
+	m_widget.reset();
+	m_page.reset();
 }
 
 void SourcetrailPluginSettingsPage::settingsFromUi(SourcetrailPluginSettings &settings) const

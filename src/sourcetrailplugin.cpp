@@ -12,7 +12,6 @@
 
 #include <QAction>
 #include <QMenu>
-#include <QTcpServer>
 #include <QTcpSocket>
 
 using namespace Core;
@@ -22,16 +21,14 @@ namespace Sourcetrail
 
 SourcetrailPlugin::SourcetrailPlugin()
 {
-	m_server = new QTcpServer(this);
-
-	connect(m_server, &QTcpServer::newConnection, [=]()
+	connect(&m_server, &QTcpServer::newConnection, this, [=]()
 	{
-		QTcpSocket *connection = m_server->nextPendingConnection();
+		QTcpSocket *connection = m_server.nextPendingConnection();
 		connect(connection, &QAbstractSocket::disconnected, connection, &QObject::deleteLater);
 
-		connect(connection, &QAbstractSocket::readyRead, [this, connection]()
+		connect(connection, &QAbstractSocket::readyRead, this, [=]()
 		{
-			this->handleMessage(QString::fromLatin1(connection->readAll()));
+			handleMessage(QString::fromUtf8(connection->readAll()));
 		});
 	});
 }
@@ -51,20 +48,9 @@ void SourcetrailPlugin::handleMessage(QString message)
 
 SourcetrailPlugin::~SourcetrailPlugin()
 {
-	// Unregister objects from the plugin manager's object pool
-	// Delete members
-
 	stopListening();
-	delete m_server;
 }
 
-void SourcetrailPlugin::restartServer()
-{
-	Utils::QtcSettings *s = Core::ICore::settings();
-	m_settings.fromSettings(s);
-	stopListening();
-	startListening();
-}
 
 void SourcetrailPlugin::initialize()
 {
@@ -80,50 +66,49 @@ void SourcetrailPlugin::initialize()
 	m_page = new SourcetrailPluginSettingsPage(this);
 	connect(m_page, &SourcetrailPluginSettingsPage::SourcetrailPluginSettingsChanged, this, &SourcetrailPlugin::restartServer);
 
-	// (re-)start server
-	QAction *startAction = new QAction(tr("Start Sourcetrail Listener"), this);
-	Core::Command *restartCommand = Core::ActionManager::registerAction(startAction, Constants::RESTART_ACTION_ID, Core::Context(Core::Constants::C_GLOBAL));
+	// Sourcetrail menu:
 
-	connect(startAction, &QAction::triggered, this, &SourcetrailPlugin::restartServer);
-
-	// stop server
-	QAction *stopAction = new QAction(tr("Stop Sourcetrail Listener"), this);
-	Core::Command *stopCommand = Core::ActionManager::registerAction(stopAction, Constants::STOP_ACTION_ID, Core::Context(Core::Constants::C_GLOBAL));
-
-	connect(stopAction, &QAction::triggered, this, &SourcetrailPlugin::stopServer);
-
-	// send location
-	QAction *action = new QAction(QIcon(Constants::CATEGORY_ICON), tr("Send Location to Sourcetrail"), this);
-	Core::Command *cmd = Core::ActionManager::registerAction(action, Constants::SEND_ACTION_ID, Core::Context(Core::Constants::C_GLOBAL));
-	cmd->setDefaultKeySequence(QKeySequence(tr("Alt+S,Alt+S")));
-	connect(action, &QAction::triggered, this, &SourcetrailPlugin::triggerAction);
-
-	// action to show if the server is running TODO: move to statusbar or ...
-	QAction *statusAction = new QAction(tr("Server Status:"), this);
-	statusAction->setEnabled(false);
-	m_statusCommand = Core::ActionManager::registerAction(statusAction, Constants::STATUS_ACTION_ID, Core::Context(Core::Constants::C_GLOBAL));
-
-	// sourcetrail menu
 	Core::ActionContainer *menu = Core::ActionManager::createMenu(Constants::MENU_ID);
 	menu->menu()->setTitle(tr("Sourcetrail"));
 	menu->menu()->setIcon(QIcon(Constants::CATEGORY_ICON));
-	menu->addAction(cmd);
+
+	// Send location:
+
+	QAction *sendLocationAction = new QAction(QIcon(Constants::CATEGORY_ICON), tr("Send Location"), this);
+	Core::Command *sendLocationCommand = Core::ActionManager::registerAction(sendLocationAction, Constants::SEND_LOCATION_ID, Core::Context(Core::Constants::C_GLOBAL));
+	sendLocationCommand->setDefaultKeySequence(QKeySequence(tr("Alt+S,Alt+S")));
+	menu->addAction(sendLocationCommand);
+	connect(sendLocationAction, &QAction::triggered, this, &SourcetrailPlugin::sendLocation);
+
+	// Restart server:
+
+	QAction *restartAction = new QAction(tr("Restart Listener"), this);
+	Core::Command *restartCommand = Core::ActionManager::registerAction(restartAction, Constants::RESTART_LISTENER_ID, Core::Context(Core::Constants::C_GLOBAL));
 	menu->addAction(restartCommand);
+	connect(restartAction, &QAction::triggered, this, &SourcetrailPlugin::restartServer);
+
+	// Stop server:
+
+	QAction *stopAction = new QAction(tr("Stop Listener"), this);
+	Core::Command *stopCommand = Core::ActionManager::registerAction(stopAction, Constants::STOP_LISTENER_ID, Core::Context(Core::Constants::C_GLOBAL));
 	menu->addAction(stopCommand);
-	menu->addAction(m_statusCommand);
+	connect(stopAction, &QAction::triggered, this, &SourcetrailPlugin::stopServer);
+
+	// Action to show status:
+	// Use QMenu directly (without registerAction()) to prevent the action from showing up in 'Keyboard Shortcuts'.
+
+	m_statusAction = new QAction("", this);
+	m_statusAction->setEnabled(false);
+	menu->menu()->addSeparator();
+	menu->menu()->addAction(m_statusAction);
+
 	Core::ActionManager::actionContainer(Core::Constants::M_TOOLS)->addMenu(menu);
 
-	// Editor Context Menu
-	if (ActionContainer *editorContextMenu = ActionManager::actionContainer(CppEditor::Constants::M_CONTEXT)) {
-		editorContextMenu->addAction(cmd);
-	}
-}
+	// Editor Context Menu:
 
-void SourcetrailPlugin::extensionsInitialized()
-{
-	// Retrieve objects from the plugin manager's object pool
-	// In the extensionsInitialized function, a plugin can be sure that all
-	// plugins that depend on it are completely initialized.
+	if (ActionContainer *editorContextMenu = ActionManager::actionContainer(CppEditor::Constants::M_CONTEXT)) {
+		editorContextMenu->addAction(sendLocationCommand);
+	}
 }
 
 bool SourcetrailPlugin::delayedInitialize()
@@ -132,52 +117,41 @@ bool SourcetrailPlugin::delayedInitialize()
 	return true;
 }
 
+void SourcetrailPlugin::restartServer()
+{
+	Utils::QtcSettings *s = Core::ICore::settings();
+	m_settings.fromSettings(s);
+
+	stopListening();
+	startListening();
+}
+
 void SourcetrailPlugin::stopServer()
 {
 	stopListening();
-	m_statusCommand->action()->setText(Constants::SERVER_STOPPED);
 }
 
 void SourcetrailPlugin::startListening()
 {
-	if (!m_server->listen(QHostAddress::LocalHost, m_settings.m_sourcetrailPort)) {
-		MessageManager::writeSilently(QString{"Sourcetrail Plugin TCP Server - Could not listen to port %1"}.arg(m_settings.m_sourcetrailPort));
+	if (m_server.listen(QHostAddress::LocalHost, m_settings.m_sourcetrailPort)) {
+		setStatus(tr("Running"));
 	} else {
-		m_statusCommand->action()->setText(Constants::SERVER_RUNNING);
+		setStatus(m_server.errorString());
+		MessageManager::writeSilently(tr("Sourcetrail: Listening on port %1 failed because %2").arg(m_settings.m_sourcetrailPort).arg(m_server.errorString()));
 	}
 }
 
 void SourcetrailPlugin::stopListening()
 {
-	if (m_server->isListening()) {
-		m_server->close();
+	if (m_server.isListening()) {
+		m_server.close();
+		setStatus(tr("Stopped"));
 	}
 }
 
-ExtensionSystem::IPlugin::ShutdownFlag SourcetrailPlugin::aboutToShutdown()
+void SourcetrailPlugin::setStatus(const QString &message)
 {
-	// Save settings
-	// Disconnect from signals that are not needed during shutdown
-	// Hide UI (if you add UI that is not in the main window directly)
-	return SynchronousShutdown;
-}
-
-void SourcetrailPlugin::sendMessage(QString message)
-{
-	QTcpSocket *senderSocket = new QTcpSocket(this);
-	senderSocket->connectToHost(m_settings.m_hostAddress, m_settings.m_pluginPort);
-
-	if (senderSocket->waitForConnected()) {
-		senderSocket->write(message.toUtf8());
-		senderSocket->flush();
-		senderSocket->waitForBytesWritten();
-		senderSocket->close();
-	}
-}
-
-void SourcetrailPlugin::sendPing()
-{
-	sendMessage("ping>>Qt Creator<EOM>");
+	m_statusAction->setText(tr("Listener Status: %1").arg(message));
 }
 
 void SourcetrailPlugin::setCursor(const Utils::FilePath &file, int line, int column)
@@ -186,6 +160,20 @@ void SourcetrailPlugin::setCursor(const Utils::FilePath &file, int line, int col
 }
 
 void SourcetrailPlugin::sendLocation()
+{
+	sendPing();
+	sendEditorLocation();
+
+	Utils::FilePaths list;
+	Core::ICore::openFiles(list);
+}
+
+void SourcetrailPlugin::sendPing()
+{
+	sendMessage("ping>>Qt Creator<EOM>");
+}
+
+void SourcetrailPlugin::sendEditorLocation()
 {
 	IEditor *editor = Core::EditorManager::currentEditor();
 	if (editor != nullptr) {
@@ -197,17 +185,22 @@ void SourcetrailPlugin::sendLocation()
 
 		sendMessage(message);
 	} else {
-		MessageManager::writeSilently(QString{"Sourcetrail Plugin TCP Server - Action Triggered but no editor"});
+		MessageManager::writeSilently(tr("Sourcetrail: Sending location not possible, because there is no active editor"));
 	}
 }
 
-void SourcetrailPlugin::triggerAction()
+void SourcetrailPlugin::sendMessage(const QString &message)
 {
-	sendPing();
-	sendLocation();
+	QTcpSocket senderSocket;
+	senderSocket.connectToHost(m_settings.m_hostAddress, m_settings.m_pluginPort);
 
-	Utils::FilePaths list;
-	Core::ICore::openFiles(list);
+	if (senderSocket.waitForConnected()) {
+		senderSocket.write(message.toUtf8());
+		senderSocket.flush();
+		senderSocket.waitForBytesWritten();
+		senderSocket.close();
+	} else
+		setStatus(senderSocket.errorString());
 }
 
 } // namespace Sourcetrail

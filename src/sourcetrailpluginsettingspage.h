@@ -5,7 +5,7 @@
 
 #include <coreplugin/dialogs/ioptionspage.h>
 
-#include <QPointer>
+#include <memory>
 
 namespace Sourcetrail
 {
@@ -16,7 +16,6 @@ class SourcetrailPluginSettingsPage : public QObject, public Core::IOptionsPage
 
 public:
 	SourcetrailPluginSettingsPage(QObject *parent);
-	~SourcetrailPluginSettingsPage() override;
 
 	// IOptionsPage
 	QWidget *widget() override;
@@ -29,8 +28,8 @@ signals:
 private:
 	void settingsFromUi(SourcetrailPluginSettings &sourcetrail) const;
 
-	Ui::SourcetrailPluginSettingsPage *m_page = nullptr;
-	QPointer<QWidget> m_widget;
+	std::unique_ptr<QWidget> m_widget;
+	std::unique_ptr<Ui::SourcetrailPluginSettingsPage> m_page;
 	SourcetrailPluginSettings m_settings;
 };
 

@@ -5,9 +5,7 @@
 #include <coreplugin/actionmanager/command.h>
 #include <extensionsystem/iplugin.h>
 
-class QTcpServer;
-class StatusBarWidget;
-class QAction;
+#include <QTcpServer>
 
 namespace Sourcetrail
 {
@@ -22,9 +20,7 @@ public:
 	~SourcetrailPlugin() override;
 
 	void initialize() override;
-	void extensionsInitialized() override;
 	bool delayedInitialize() override;
-	ShutdownFlag aboutToShutdown() override;
 
 public slots:
 	void restartServer();
@@ -32,19 +28,19 @@ public slots:
 
 private:
 	void handleMessage(QString message);
-	void triggerAction();
-	void sendPing();
+	void setStatus(const QString &message);
 	void sendLocation();
+	void sendPing();
+	void sendEditorLocation();
 	void startListening();
 	void stopListening();
-	void sendMessage(QString message);
+	void sendMessage(const QString &message);
 	static void setCursor(const Utils::FilePath &file, int line, int column);
 
-	QTcpServer *m_server;
+	QTcpServer m_server;
 	SourcetrailPluginSettingsPage *m_page;
 	SourcetrailPluginSettings m_settings;
-	StatusBarWidget *m_statusBar;
-	Core::Command *m_statusCommand;
+	QAction *m_statusAction;
 };
 
 } // namespace Sourcetrail

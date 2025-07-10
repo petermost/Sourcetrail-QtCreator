@@ -23,13 +23,13 @@ SourcetrailPlugin::SourcetrailPlugin()
 {
 	connect(&m_server, &QTcpServer::newConnection, this, [=]()
 	{
-		QTcpSocket *connection = m_server.nextPendingConnection();
-		connect(connection, &QAbstractSocket::disconnected, connection, &QObject::deleteLater);
-
-		connect(connection, &QAbstractSocket::readyRead, this, [=]()
-		{
-			handleMessage(QString::fromUtf8(connection->readAll()));
-		});
+		if (QTcpSocket *connection = m_server.nextPendingConnection()) {
+			connect(connection, &QAbstractSocket::readyRead, this, [=]()
+			{
+				handleMessage(QString::fromUtf8(connection->readAll()));
+				connection->deleteLater();
+			});
+		}
 	});
 }
 
@@ -38,10 +38,10 @@ void SourcetrailPlugin::handleMessage(QString message)
 	message = message.remove(message.indexOf("<EOM>"), 5);
 	QStringList list = message.split(">>");
 
-	if (list[0] == "ping") {
+	if (list.size() >= 1 && list[0] == "ping") {
 		sendPing();
 	}
-	if (list[0] == "moveCursor") {
+	if (list.size() >= 4 && list[0] == "moveCursor") {
 		setCursor(Utils::FilePath::fromString(list[1]), list[2].toInt(), list[3].toInt());
 	}
 }

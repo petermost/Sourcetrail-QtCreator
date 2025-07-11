@@ -5,7 +5,7 @@ set(CREATOR_URL "https://download.qt.io/official_releases/qtcreator/17.0/${CREAT
 
 if (LINUX)
 	set(CREATOR_URL "${CREATOR_URL}/linux_x64")
-elseif(WINDOWS)
+elseif(WIN32)
 	set(CREATOR_URL "${CREATOR_URL}/windows_x64")
 endif()
 
@@ -74,7 +74,12 @@ target_include_directories(Sourcetrail
 
 target_link_directories(Sourcetrail
 	PRIVATE
+		# Linux:
 		${CMAKE_BINARY_DIR}/qt-bin/lib/qtcreator/plugins/
+		
+		# Windows:
+		${CMAKE_BINARY_DIR}/qt-src/lib/qtcreator/plugins/
+		${CMAKE_BINARY_DIR}/qt-src/bin/
 )
 
 # Link to Qt libraries
@@ -84,8 +89,8 @@ target_link_libraries(Sourcetrail PRIVATE
     Qt6::Widgets
     
 	Core # QtCreator::Core
-	# QtCreator::ExtensionSystem
-	# QtCreator::Utils
+	Utils # QtCreator::Utils
+	ExtensionSystem # QtCreator::ExtensionSystem
 )
 
 set(CPACK_GENERATOR ZIP)

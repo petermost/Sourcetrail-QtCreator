@@ -16,12 +16,7 @@
 			"name": "system-default-presets",
 			"inherits": [
 				"default-presets"
-			],
-			"condition": {
-				"type": "equals",
-				"lhs": "${hostSystemName}",
-				"rhs": "Linux"
-			}
+			]
 		},
 		{
 			"hidden": true,

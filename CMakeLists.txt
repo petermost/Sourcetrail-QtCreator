@@ -7,16 +7,18 @@ if (LINUX)
 	set(CREATOR_URL "${CREATOR_URL}/linux_x64")
 elseif(WIN32)
 	set(CREATOR_URL "${CREATOR_URL}/windows_x64")
+else()
+	message(FATAL_ERROR, "Untested platform ${CMAKE_SYSTEM_NAME}!")
 endif()
 
 project(QtCreatorSourcetrailPlugin VERSION ${CREATOR_VERSION} LANGUAGES CXX)
 
 function(downloadAndExtract targetDir url archiveName)
-    if(NOT EXISTS "${CMAKE_BINARY_DIR}/${targetDir}")
-        message(STATUS "Downloading ${url} ...")
-        file(DOWNLOAD "${url}" "${CMAKE_BINARY_DIR}/${archiveName}" SHOW_PROGRESS)
-        execute_process(COMMAND 7z x -y "${CMAKE_BINARY_DIR}/${archiveName}" -o${CMAKE_BINARY_DIR}/${targetDir})
-    endif()
+	if(NOT EXISTS "${CMAKE_BINARY_DIR}/${targetDir}")
+		message(STATUS "Downloading ${url} ...")
+		file(DOWNLOAD "${url}" "${CMAKE_BINARY_DIR}/${archiveName}" SHOW_PROGRESS)
+		execute_process(COMMAND 7z x -y "${CMAKE_BINARY_DIR}/${archiveName}" -o${CMAKE_BINARY_DIR}/${targetDir})
+	endif()
 endfunction()
 
 downloadAndExtract("qt-src" "${CREATOR_URL}/qtcreator_dev.7z" "qt-dev.7z")
@@ -56,42 +58,48 @@ add_library(Sourcetrail SHARED
 	src/sourcetrail_global.h
 	
 	src/sourcetrailpluginsettingspage.h
-    src/sourcetrailpluginsettingspage.cpp
-    
+	src/sourcetrailpluginsettingspage.cpp
+	
 	src/sourcetrailpluginsettings.h
-    src/sourcetrailpluginsettings.cpp
-    
+	src/sourcetrailpluginsettings.cpp
+	
 	src/sourcetrailplugin.h
-    src/sourcetrailplugin.cpp
+	src/sourcetrailplugin.cpp
 )
 
-# Include directories
 target_include_directories(Sourcetrail 
-    PRIVATE
-        ${CMAKE_BINARY_DIR}/qt-src/include/qtcreator/src/libs/
-        ${CMAKE_BINARY_DIR}/qt-src/include/qtcreator/src/plugins/
+	PRIVATE
+		${CMAKE_BINARY_DIR}/qt-src/include/qtcreator/src/libs/
+		${CMAKE_BINARY_DIR}/qt-src/include/qtcreator/src/plugins/
 )
 
 target_link_directories(Sourcetrail
 	PRIVATE
-		# Linux:
 		${CMAKE_BINARY_DIR}/qt-bin/lib/qtcreator/plugins/
-		
-		# Windows:
-		${CMAKE_BINARY_DIR}/qt-src/lib/qtcreator/plugins/
-		${CMAKE_BINARY_DIR}/qt-src/bin/
 )
 
-# Link to Qt libraries
-target_link_libraries(Sourcetrail PRIVATE
-    Qt6::Gui
-    Qt6::Network
-    Qt6::Widgets
-    
-	Core # QtCreator::Core
-	Utils # QtCreator::Utils
-	ExtensionSystem # QtCreator::ExtensionSystem
+target_link_libraries(Sourcetrail 
+	PRIVATE
+		Qt6::Gui
+		Qt6::Network
+		Qt6::Widgets
+		
+		Core # QtCreator::Core
 )
+
+if (WIN32)
+	target_link_directories(Sourcetrail
+		PRIVATE
+			${CMAKE_BINARY_DIR}/qt-src/bin/
+			${CMAKE_BINARY_DIR}/qt-src/lib/qtcreator/plugins/
+	)
+	
+	target_link_libraries(Sourcetrail
+		PRIVATE
+			Utils           # QtCreator::Utils 
+			ExtensionSystem # QtCreator::ExtensionSystem
+	)
+endif()
 
 set(CPACK_GENERATOR ZIP)
 install(TARGETS Sourcetrail DESTINATION .)

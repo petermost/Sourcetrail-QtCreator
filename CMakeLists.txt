@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 3.25)
 
-set(CREATOR_VERSION "17.0.0")
-set(CREATOR_URL "https://download.qt.io/official_releases/qtcreator/17.0/${CREATOR_VERSION}/installer_source")
+# Adjust these 2 variables for newer versions:
 
+set(CREATOR_VERSION_DIRECTORY "17.0")
+set(CREATOR_VERSION "17.0.2")
+
+# Do the download:
+
+set(CREATOR_URL "https://download.qt.io/official_releases/qtcreator/${CREATOR_VERSION_DIRECTORY}/${CREATOR_VERSION}/installer_source")
 if (LINUX)
 	set(CREATOR_URL "${CREATOR_URL}/linux_x64")
 elseif(WIN32)

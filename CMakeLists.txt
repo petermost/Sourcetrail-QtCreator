@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.25)
 
 # Adjust these 2 variables for newer versions:
 
-set(CREATOR_VERSION_DIRECTORY "17.0")
-set(CREATOR_VERSION "17.0.2")
+set(CREATOR_VERSION_DIRECTORY "18.0")
+set(CREATOR_VERSION "18.0.0")
 
 # Do the download:
 

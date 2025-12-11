@@ -40,14 +40,14 @@
 
 
 		{
-			"name": "system-ninja-debug",
+			"name": "system-debug",
 			"inherits": [
 				"debug-presets",
 				"system-default-presets"
 			]
 		},
 		{
-			"name": "system-ninja-release",
+			"name": "system-release",
 			"inherits": [
 				"release-presets",
 				"system-default-presets"

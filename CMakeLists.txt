@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.25)
 # Adjust these 2 variables for newer versions:
 
 set(CREATOR_VERSION_DIRECTORY "18.0")
-set(CREATOR_VERSION "18.0.0")
+set(CREATOR_VERSION "18.0.2")
 
 # Do the download:
 
@@ -16,7 +16,7 @@ else()
 	message(FATAL_ERROR, "Untested platform ${CMAKE_SYSTEM_NAME}!")
 endif()
 
-project(QtCreatorSourcetrailPlugin VERSION ${CREATOR_VERSION} LANGUAGES CXX)
+project(QtCreator-SourcetrailPlugin VERSION ${CREATOR_VERSION} LANGUAGES CXX)
 
 function(downloadAndExtract targetDir url archiveName)
 	if(NOT EXISTS "${CMAKE_BINARY_DIR}/${targetDir}")

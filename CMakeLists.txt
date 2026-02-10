@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 3.25)
 
-# Adjust these 2 variables for newer versions:
+# Adjust the first 2 variables for newer versions:
+# Note: These variables are also referenced in 'Sourcetrail.json.in'
 
-set(CREATOR_VERSION_DIRECTORY "18.0")
-set(CREATOR_VERSION "18.0.2")
+set(CREATOR_MAJOR_MINOR_VERSION "18.0")
+set(CREATOR_FULL_VERSION "18.0.2")
+set(CREATOR_COMPAT_VERSION "18.0.0")
 
 # Do the download:
 
-set(CREATOR_URL "https://download.qt.io/official_releases/qtcreator/${CREATOR_VERSION_DIRECTORY}/${CREATOR_VERSION}/installer_source")
+set(CREATOR_URL "https://download.qt.io/official_releases/qtcreator/${CREATOR_MAJOR_MINOR_VERSION}/${CREATOR_FULL_VERSION}/installer_source")
 if (LINUX)
 	set(CREATOR_URL "${CREATOR_URL}/linux_x64")
 elseif(WIN32)
@@ -16,13 +18,13 @@ else()
 	message(FATAL_ERROR, "Untested platform ${CMAKE_SYSTEM_NAME}!")
 endif()
 
-project(QtCreator-SourcetrailPlugin VERSION ${CREATOR_VERSION} LANGUAGES CXX)
+project(QtCreator-SourcetrailPlugin VERSION 2026.2.10 LANGUAGES CXX)
 
 function(downloadAndExtract targetDir url archiveName)
-	if(NOT EXISTS "${CMAKE_BINARY_DIR}/${targetDir}")
+	if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/${targetDir}")
 		message(STATUS "Downloading ${url} ...")
-		file(DOWNLOAD "${url}" "${CMAKE_BINARY_DIR}/${archiveName}" SHOW_PROGRESS)
-		execute_process(COMMAND 7z x -y "${CMAKE_BINARY_DIR}/${archiveName}" -o${CMAKE_BINARY_DIR}/${targetDir})
+		file(DOWNLOAD "${url}" "${CMAKE_CURRENT_BINARY_DIR}/${archiveName}" SHOW_PROGRESS)
+		execute_process(COMMAND 7z x -y "${CMAKE_CURRENT_BINARY_DIR}/${archiveName}" -o${CMAKE_CURRENT_BINARY_DIR}/${targetDir})
 	endif()
 endfunction()
 
@@ -74,13 +76,13 @@ add_library(Sourcetrail SHARED
 
 target_include_directories(Sourcetrail 
 	PRIVATE
-		${CMAKE_BINARY_DIR}/qt-src/include/qtcreator/src/libs/
-		${CMAKE_BINARY_DIR}/qt-src/include/qtcreator/src/plugins/
+		${CMAKE_CURRENT_BINARY_DIR}/qt-src/include/qtcreator/src/libs/
+		${CMAKE_CURRENT_BINARY_DIR}/qt-src/include/qtcreator/src/plugins/
 )
 
 target_link_directories(Sourcetrail
 	PRIVATE
-		${CMAKE_BINARY_DIR}/qt-bin/lib/qtcreator/plugins/
+		${CMAKE_CURRENT_BINARY_DIR}/qt-bin/lib/qtcreator/plugins/
 )
 
 target_link_libraries(Sourcetrail 
@@ -95,8 +97,8 @@ target_link_libraries(Sourcetrail
 if (WIN32)
 	target_link_directories(Sourcetrail
 		PRIVATE
-			${CMAKE_BINARY_DIR}/qt-src/bin/
-			${CMAKE_BINARY_DIR}/qt-src/lib/qtcreator/plugins/
+			${CMAKE_CURRENT_BINARY_DIR}/qt-src/bin/
+			${CMAKE_CURRENT_BINARY_DIR}/qt-src/lib/qtcreator/plugins/
 	)
 	
 	target_link_libraries(Sourcetrail

@@ -64,7 +64,7 @@ void SourcetrailPlugin::initialize()
 	IOptionsPage::registerCategory(Utils::Id(Constants::CATEGORY_ID), Constants::CATEGORY, Utils::FilePath(Constants::CATEGORY_ICON));
 
 	m_page = new SourcetrailPluginSettingsPage(this);
-	connect(m_page, &SourcetrailPluginSettingsPage::SourcetrailPluginSettingsChanged, this, &SourcetrailPlugin::restartServer);
+	connect(m_page, &SourcetrailPluginSettingsPage::settingsChanged, this, &SourcetrailPlugin::restartServer);
 
 	// Sourcetrail menu:
 

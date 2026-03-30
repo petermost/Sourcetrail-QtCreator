@@ -17,18 +17,32 @@ class SourcetrailPluginSettingsPage : public QObject, public Core::IOptionsPage
 public:
 	SourcetrailPluginSettingsPage(QObject *parent);
 
-	// IOptionsPage
-	QWidget *widget() override;
-	void apply() override;
-	void finish() override;
-
 signals:
-	void SourcetrailPluginSettingsChanged(const Sourcetrail::SourcetrailPluginSettings &);
+	void settingsChanged(const Sourcetrail::SourcetrailPluginSettings &);
 
 private:
-	void settingsFromUi(SourcetrailPluginSettings &sourcetrail) const;
+};
 
-	std::unique_ptr<QWidget> m_widget;
+
+
+class SourcetrailPluginSettingsPageWidget : public Core::IOptionsPageWidget
+{
+	Q_OBJECT
+
+public:
+	SourcetrailPluginSettingsPageWidget();
+
+	void apply() final;
+	void cancel() final;
+    bool isDirty() const final;
+
+signals:
+	void settingsChanged(const Sourcetrail::SourcetrailPluginSettings &);
+
+private:
+	void setUiSettings(const SourcetrailPluginSettings &settings);
+	SourcetrailPluginSettings getUiSettings() const;
+
 	std::unique_ptr<Ui::SourcetrailPluginSettingsPage> m_page;
 	SourcetrailPluginSettings m_settings;
 };

@@ -14,54 +14,69 @@ SourcetrailPluginSettingsPage::SourcetrailPluginSettingsPage(QObject *parent)
 	setDisplayName(tr(Constants::CATEGORY));
 	setCategory(Utils::Id(Constants::CATEGORY_ID));
 
+	// If a widget creator is set, then a settings provider will be ignored!
+	// See: https://github.com/qt-creator/qt-creator/blob/efebd42b50e1d1098f7679f2cd4a476c474f2312/src/plugins/coreplugin/dialogs/ioptionspage.cpp#L450
+
+	setWidgetCreator([this]()
+	{
+		SourcetrailPluginSettingsPageWidget *widget = new SourcetrailPluginSettingsPageWidget();
+		connect(widget, &SourcetrailPluginSettingsPageWidget::settingsChanged, this, &SourcetrailPluginSettingsPage::settingsChanged);
+
+		return widget;
+	});
+}
+
+
+
+SourcetrailPluginSettingsPageWidget::SourcetrailPluginSettingsPageWidget()
+{
+	m_page = std::make_unique<Ui::SourcetrailPluginSettingsPage>();
+	m_page->setupUi(this);
+
 	Utils::QtcSettings *s = Core::ICore::settings();
 	m_settings.fromSettings(s);
+
+	setUiSettings(m_settings);
 }
 
-QWidget *SourcetrailPluginSettingsPage::widget()
+void SourcetrailPluginSettingsPageWidget::apply()
 {
-	if (m_widget == nullptr) {
-		m_widget = std::make_unique<QWidget>();
-		m_page = std::make_unique<Ui::SourcetrailPluginSettingsPage>();
-		m_page->setupUi(m_widget.get());
+	SourcetrailPluginSettings settings = getUiSettings();
 
-		m_page->hostaddress->setText(m_settings.m_hostAddress);
-		m_page->pluginport->setText(QString::number(m_settings.m_pluginPort));
-		m_page->sourcetrailport->setText(QString::number(m_settings.m_sourcetrailPort));
-	}
-	return m_widget.get();
-}
-
-void SourcetrailPluginSettingsPage::apply()
-{
-	if (m_page == nullptr) // page was never shown
-		return;
-
-	SourcetrailPluginSettings setting;
-	settingsFromUi(setting);
-
-	if (m_settings != setting) {
-		m_settings = setting;
+	if (m_settings != settings)	{
+		m_settings = settings;
 		Utils::QtcSettings *s = Core::ICore::settings();
 		m_settings.toSettings(s);
-		emit SourcetrailPluginSettingsChanged(setting);
+
+		emit settingsChanged(settings);
 	}
 }
 
-void SourcetrailPluginSettingsPage::finish()
+void SourcetrailPluginSettingsPageWidget::cancel()
 {
-	m_widget.reset();
-	m_page.reset();
+	setUiSettings(m_settings);
 }
 
-void SourcetrailPluginSettingsPage::settingsFromUi(SourcetrailPluginSettings &settings) const
+bool SourcetrailPluginSettingsPageWidget::isDirty() const
 {
-	if (m_page == nullptr)
-		return;
+	return m_settings != getUiSettings();
+}
 
-	settings.m_hostAddress = m_page->hostaddress->text();
-	settings.m_pluginPort = m_page->pluginport->text().toInt();
-	settings.m_sourcetrailPort = m_page->sourcetrailport->text().toInt();
+void SourcetrailPluginSettingsPageWidget::setUiSettings(const SourcetrailPluginSettings &settings)
+{
+	m_page->hostaddress->setText(settings.m_hostAddress);
+	m_page->pluginport->setText(QString::number(settings.m_pluginPort));
+	m_page->sourcetrailport->setText(QString::number(settings.m_sourcetrailPort));
+}
+
+SourcetrailPluginSettings SourcetrailPluginSettingsPageWidget::getUiSettings() const
+{
+	SourcetrailPluginSettings settings {
+		.m_hostAddress = m_page->hostaddress->text(),
+		.m_sourcetrailPort = m_page->sourcetrailport->text().toInt(),
+		.m_pluginPort = m_page->pluginport->text().toInt()
+	};
+	return settings;
 }
 
 } // namespace Sourcetrail

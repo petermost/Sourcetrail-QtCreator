@@ -4,12 +4,12 @@ cmake_minimum_required(VERSION 3.25)
 # Note: These variables are also referenced in 'Sourcetrail.json.in'
 
 set(CREATOR_MAJOR_MINOR_VERSION "19.0")
-set(CREATOR_FULL_VERSION "19.0.0")
+set(CREATOR_MAJOR_MINOR_PATCH_VERSION "19.0.0")
 set(CREATOR_COMPAT_VERSION "19.0.0")
 
 # Do the download:
 
-set(CREATOR_URL "https://download.qt.io/official_releases/qtcreator/${CREATOR_MAJOR_MINOR_VERSION}/${CREATOR_FULL_VERSION}/installer_source")
+set(CREATOR_URL "https://download.qt.io/official_releases/qtcreator/${CREATOR_MAJOR_MINOR_VERSION}/${CREATOR_MAJOR_MINOR_PATCH_VERSION}/installer_source")
 if (LINUX)
 	set(CREATOR_URL "${CREATOR_URL}/linux_x64")
 elseif(WIN32)
@@ -18,7 +18,7 @@ else()
 	message(FATAL_ERROR, "Untested platform ${CMAKE_SYSTEM_NAME}!")
 endif()
 
-project(QtCreator-SourcetrailPlugin VERSION 2026.3.12 LANGUAGES CXX)
+project(QtCreator-SourcetrailPlugin VERSION ${CREATOR_MAJOR_MINOR_PATCH_VERSION} LANGUAGES CXX)
 
 function(downloadAndExtract targetDir url archiveName)
 	if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/${targetDir}")

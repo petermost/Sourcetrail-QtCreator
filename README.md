@@ -5,7 +5,7 @@ Qt Creator Plugin for communication with [Sourcetrail](http://sourcetrail.de)
 
 ## Building the Plugin
 
-TODO: Converted to CMake
+TODO
 
 ## Install
 
@@ -22,7 +22,3 @@ In the menu Tools -> Options ... -> Sourcetrail
 ### Keyboard
 
 In the menu Tools -> Options ... -> Environment -> Keyboard and use the filter to find the Sourcetrail Actions
-
-
-
-

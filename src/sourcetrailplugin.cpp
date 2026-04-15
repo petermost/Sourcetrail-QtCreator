@@ -21,10 +21,10 @@ namespace Sourcetrail
 
 SourcetrailPlugin::SourcetrailPlugin()
 {
-	connect(&m_server, &QTcpServer::newConnection, this, [=]()
+	connect(&m_server, &QTcpServer::newConnection, this, [=, this]()
 	{
 		if (QTcpSocket *connection = m_server.nextPendingConnection()) {
-			connect(connection, &QAbstractSocket::readyRead, this, [=]()
+			connect(connection, &QAbstractSocket::readyRead, this, [=, this]()
 			{
 				handleMessage(QString::fromUtf8(connection->readAll()));
 				connection->deleteLater();

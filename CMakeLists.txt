@@ -3,9 +3,9 @@ cmake_minimum_required(VERSION 3.25)
 # Adjust the first 2 variables for newer versions:
 # Note: These variables are also referenced in 'Sourcetrail.json.in'
 
-set(CREATOR_MAJOR_MINOR_VERSION "19.0")
-set(CREATOR_MAJOR_MINOR_PATCH_VERSION "19.0.0")
-set(CREATOR_COMPAT_VERSION "19.0.0")
+set(CREATOR_MAJOR_MINOR_VERSION "20.0")
+set(CREATOR_MAJOR_MINOR_PATCH_VERSION "20.0.0")
+set(CREATOR_COMPAT_VERSION "20.0.0")
 
 # Do the download:
 
